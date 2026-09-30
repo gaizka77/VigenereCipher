@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vigenere Cipher | PDF Security</title>
+
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 25px 8%;
+            border-bottom: 1px solid #273449;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #a5b4fc;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 55px 20px 30px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 span {
+            color: #818cf8;
+        }
+
+        .hero p {
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 20px auto 60px;
+            padding: 30px;
+            background: #151f32;
+            border: 1px solid #29364d;
+            border-radius: 18px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area {
+            border: 2px dashed #475569;
+            border-radius: 12px;
+            padding: 35px 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            background: #101a2c;
+        }
+
+        .upload-area p {
+            color: #94a3b8;
+            margin: 10px 0;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #4f46e5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .upload-btn:hover {
+            background: #6366f1;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: #a5b4fc;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0b1120;
+            color: white;
+            outline: none;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"]:focus {
+            border-color: #818cf8;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .encrypt-btn {
+            background: #4f46e5;
+        }
+
+        .decrypt-btn {
+            background: #0891b2;
+        }
+
+        .status {
+            padding: 15px;
+            background: #0b1120;
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 20px;
+            overflow-wrap: anywhere;
+        }
+
+        .preview-title {
+            margin: 20px 0 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #0b1120;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            resize: vertical;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+
+        .download-btn {
+            width: 100%;
+            margin-top: 15px;
+            background: #059669;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 27px;
+            }
+
+            .container {
+                margin: 15px;
+                padding: 20px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🔐 VIGENERE CIPHER</div>
+    <div>PDF Security</div>
+</header>
+
+<section class="hero">
+    <h1>Secure Your <span>Documents</span></h1>
+    <p>
+        Aplikasi enkripsi dan dekripsi PDF menggunakan
+        algoritma Vigenère Cipher.
+    </p>
+</section>
+
+<main class="container">
+
+    <h3 class="section-title">01. Upload Dokumen</h3>
+
+    <div class="upload-area">
+
+        <div style="font-size:40px;">📄</div>
+
+        <p>Pilih dokumen PDF yang ingin diproses</p>
+
+        <label for="pdfFile" class="upload-btn">
+            Browse PDF
+        </label>
+
+        <input
+            type="file"
+            id="pdfFile"
+            accept=".pdf,application/pdf"
+        >
+
+        <div class="file-name" id="fileName">
+            Belum ada file dipilih
+        </div>
+
+    </div>
+
+    <h3 class="section-title">02. Secret Key</h3>
+
+    <label for="secretKey">Masukkan kunci rahasia</label>
+
+    <input
+        type="text"
+        id="secretKey"
+        placeholder="Contoh: KUNCI"
+        autocomplete="off"
+    >
+
+    <h3 class="section-title">03. Pilih Proses</h3>
+
+    <div class="button-group">
+
+        <button
+            class="encrypt-btn"
+            id="encryptBtn"
+            onclick="processPDF('encrypt')"
+        >
+            🔒 ENKRIPSI PDF
+        </button>
+
+        <button
+            class="decrypt-btn"
+            id="decryptBtn"
+            onclick="processPDF('decrypt')"
+        >
+            🔓 DEKRIPSI PDF
+        </button>
+
+    </div>
+
+    <div class="status" id="status">
+        Status: Menunggu file PDF...
+    </div>
+
+    <h3 class="preview-title">04. Preview Hasil</h3>
+
+    <textarea
+        id="preview"
+        readonly
+        placeholder="Hasil teks akan muncul di sini..."
+    ></textarea>
+
+    <button
+        class="download-btn"
+        id="downloadBtn"
+        onclick="downloadPDF()"
+        disabled
+    >
+        ⬇ DOWNLOAD HASIL PDF
+    </button>
+
+</main>
+
+<footer>
+    Vigenere Cipher PDF Security | Educational Project
+</footer>
+
+<script>
+
+    // Konfigurasi PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    let selectedFile = null;
+    let resultText = "";
+    let resultName = "";
+
+    // Mengambil file PDF
+    document.getElementById("pdfFile").addEventListener(
+        "change",
+        function(event) {
+
+            const file = event.target.files[0];
+
+            if (!file) return;
+
+            if (file.type !== "application/pdf" &&
+                !file.name.toLowerCase().endsWith(".pdf")) {
+
+                alert("Silakan pilih file PDF!");
+                return;
+            }
+
+            selectedFile = file;
+            resultText = "";
+
+            document.getElementById("fileName").textContent =
+                file.name;
+
+            document.getElementById("preview").value = "";
+
+            document.getElementById("downloadBtn").disabled = true;
+
+            document.getElementById("status").textContent =
+                "Status: File berhasil dipilih.";
+
+        }
+    );
+
+
+    // Membaca teks PDF
+    async function readPDF(file) {
+
+        const buffer = await file.arrayBuffer();
+
+        const pdf = await pdfjsLib.getDocument({
+            data: new Uint8Array(buffer)
+        }).promise;
+
+        let fullText = "";
+
+        for (let pageNumber = 1;
+             pageNumber <= pdf.numPages;
+             pageNumber++) {
+
+            const page = await pdf.getPage(pageNumber);
+
+            const content = await page.getTextContent();
+
+            const pageText = content.items.map(item => {
+
+                return item.str + (item.hasEOL ? "\n" : " ");
+
+            }).join("");
+
+            fullText += pageText + "\n\n";
+        }
+
+        return fullText;
+    }
+
+
+    // Fungsi Vigenere Cipher
+    function vigenere(text, key, mode) {
+
+        key = key.toUpperCase().replace(/[^A-Z]/g, "");
+
+        if (!key) {
+            throw new Error(
+                "Kunci harus memiliki minimal satu huruf A-Z."
+            );
+        }
+
+        let result = "";
+        let keyIndex = 0;
+
+        for (let i = 0; i < text.length; i++) {
+
+            let char = text[i];
+
+            if (/[a-zA-Z]/.test(char)) {
+
+                let base = char === char.toUpperCase() ? 65 : 97;
+
+                let p = char.charCodeAt(0) - base;
+
+                let k = key.charCodeAt(
+                    keyIndex % key.length
+                ) - 65;
+
+                let value;
+
+                if (mode === "encrypt") {
+                    value = (p + k) % 26;
+                } else {
+                    value = (p - k + 26) % 26;
+                }
+
+                result += String.fromCharCode(value + base);
+
+                keyIndex++;
+
+            } else {
+
+                result += char;
+
+            }
+        }
+
+        return result;
+    }
+
+
+    // Memproses enkripsi atau dekripsi
+    async function processPDF(mode) {
+
+        if (!selectedFile) {
+            alert("Pilih file PDF terlebih dahulu!");
+            return;
+        }
+
+        const key = document.getElementById("secretKey").value;
+
+        if (!/[a-zA-Z]/.test(key)) {
+            alert("Masukkan kunci yang memiliki huruf A-Z!");
+            return;
+        }
+
+        const encryptBtn = document.getElementById("encryptBtn");
+        const decryptBtn = document.getElementById("decryptBtn");
+        const downloadBtn = document.getElementById("downloadBtn");
+
+        encryptBtn.disabled = true;
+        decryptBtn.disabled = true;
+        downloadBtn.disabled = true;
+
+        try {
+
+            document.getElementById("status").textContent =
+                "Status: Membaca dokumen PDF...";
+
+            const originalText = await readPDF(selectedFile);
+
+            if (!originalText.trim()) {
+                throw new Error(
+                    "PDF tidak memiliki teks yang dapat diekstrak. " +
+                    "Jika berupa hasil scan, diperlukan OCR."
+                );
+            }
+
+            document.getElementById("status").textContent =
+                "Status: Sedang memproses Vigenère Cipher...";
+
+            resultText = vigenere(
+                originalText,
+                key,
+                mode
+            );
+
+            document.getElementById("preview").value =
+                resultText;
+
+            resultName = mode === "encrypt"
+                ? "encrypted.pdf"
+                : "decrypted.pdf";
+
+            document.getElementById("status").textContent =
+                mode === "encrypt"
+                ? "✓ Enkripsi berhasil. Silakan download hasil."
+                : "✓ Dekripsi berhasil. Silakan download hasil.";
+
+            downloadBtn.disabled = false;
+
+        } catch (error) {
+
+            resultText = "";
+
+            document.getElementById("preview").value = "";
+
+            document.getElementById("status").textContent =
+                "Terjadi kesalahan: " + error.message;
+
+            alert(error.message);
+
+        } finally {
+
+            encryptBtn.disabled = false;
+            decryptBtn.disabled = false;
+
+        }
+    }
+
+
+    // Membuat dan mengunduh PDF
+    function downloadPDF() {
+
+        if (!resultText) {
+            alert("Belum ada hasil untuk diunduh!");
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+
+        const doc = new jsPDF();
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+
+        const margin = 15;
+        const pageHeight = doc.internal.pageSize.height;
+        const lineHeight = 6;
+
+        let y = 20;
+
+        const paragraphs = resultText.split(/\r?\n/);
+
+        paragraphs.forEach(paragraph => {
+
+            const lines = doc.splitTextToSize(
+                paragraph,
+                180
+            );
+
+            if (lines.length === 0 || paragraph === "") {
+                y += lineHeight;
+                return;
+            }
+
+            lines.forEach(line => {
+
+                if (y > pageHeight - margin) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.text(line, margin, y);
+
+                y += lineHeight;
+
+            });
+
+        });
+
+        doc.save(resultName);
+    }
+
+</script>
+
+</body>
+</html>
